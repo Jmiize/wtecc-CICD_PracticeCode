@@ -1,11 +1,20 @@
 name: CI workflow
 
-on: [push]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
 jobs:
   build:
-    runs-on: ubunto-latest
+    runs-on: ubunto-22.04
+    container:
+      image: python:3.9-slim
     steps:
       - uses: actions/checkout@v4
+      - name: Show Python version
+        run: python --version
       - name: Run a one-line script
         run: echo Hello, world!
       - name: Run a multi-line script
