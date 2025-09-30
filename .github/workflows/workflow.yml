@@ -9,15 +9,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: python:3.9-slim
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Show Python version
-        run: python --version
-      - name: Run a one-line script
-        run: echo Hello, world!
-      - name: Run a multi-line script
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Set up Python 3.9
+        uses: actions/python@v5
+        with:
+          python-version: "3.9"
+      - name: Install dependencies
         run: |
-          echo Add other actions to build,
-          echo test, and deploy project
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Lint with flake8 (syntax-only)
+        run: flake8 service --count --select=E9,F63,F7,F82 --show-source --statistics
+      - name: Lint with flake8 (full rules)
+        run: flake8 service --count --max-complexity=10 --max-line-length=127 --statistics
+      - name: Run unit tests with nose
+        run: nosetests -v --with-spec --spec-color --with-coverage --cover-package=app
